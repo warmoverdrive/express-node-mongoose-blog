@@ -74,7 +74,6 @@ app.get("/", function (req, res) {
 				posts: [],
 			});
 		} else {
-			console.log(posts.length);
 			res.render("home", {
 				startingContent: homeStartingContent,
 				posts: posts,
@@ -106,7 +105,7 @@ app.post("/compose", function (req, res) {
 	}
 
 	const newPost = new Post({
-		title: _.capitalize(req.body.postTitle),
+		title: req.body.postTitle,
 		content: utils.parseContentToArray(req.body.postBody),
 	});
 
@@ -119,10 +118,10 @@ app.post("/compose", function (req, res) {
 	});
 });
 
-app.get("/posts/:postName", function (req, res) {
-	const requestedTitle = _.capitalize(req.params.postName);
+app.get("/posts/:postID", function (req, res) {
+	const requestedID = _.capitalize(req.params.postID);
 
-	Post.findOne({ title: requestedTitle }, (err, post) => {
+	Post.findOne({ _id: requestedID }, (err, post) => {
 		if (err) {
 			console.log(err);
 			res.redirect("/");
