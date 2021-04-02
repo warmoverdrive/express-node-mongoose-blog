@@ -8,7 +8,7 @@ const express = require("express");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
 const _ = require("lodash");
-const util = require(`${__dirname}/util.js`);
+const utils = require(`${__dirname}/util.js`);
 
 const app = express();
 
@@ -74,6 +74,7 @@ app.get("/", function (req, res) {
 				posts: [],
 			});
 		} else {
+			console.log(posts.length);
 			res.render("home", {
 				startingContent: homeStartingContent,
 				posts: posts,
@@ -106,12 +107,16 @@ app.post("/compose", function (req, res) {
 
 	const newPost = new Post({
 		title: _.capitalize(req.body.postTitle),
-		content: utils.parseContentToArray(req.body.postContent),
+		content: utils.parseContentToArray(req.body.postBody),
 	});
 
-	newPost.save();
-
-	res.redirect("/");
+	newPost.save((err) => {
+		if (err) {
+			alert("Database error, please try again later.");
+		} else {
+			res.redirect("/");
+		}
+	});
 });
 
 app.get("/posts/:postName", function (req, res) {
